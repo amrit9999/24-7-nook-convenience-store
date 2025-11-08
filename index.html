@@ -4,10 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>🛒 24/7 Nook Convenience Store — Franchise</title>
-
   <style>
     :root{
-      --bg: #37353E;         /* requested background */
+      --bg: #37353E;          /* requested background */
       --card: #45434A;
       --muted: #BFC0C6;
       --accent: #F6C85F;
@@ -15,32 +14,31 @@
       --white: #F5F5F7;
       --glass: rgba(255,255,255,0.03);
       --radius: 12px;
-      --max-width: 1100px;
+      --max-width: 1150px;
       --font: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
-
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;background:var(--bg);color:var(--white);font-family:var(--font);-webkit-font-smoothing:antialiased}
     a{color:inherit;text-decoration:none}
 
     /* Layout */
-    .container{max-width:var(--max-width);margin:28px auto;padding:20px 18px 80px 120px}
-    @media (max-width:900px){ .container{padding:18px 16px} }
+    .app{max-width:var(--max-width);margin:28px auto;padding:18px 20px 80px 120px}
+    @media (max-width:900px){ .app{padding:18px 16px} }
 
-    /* Left top menu */
-    .left-menu {
-      position:fixed; left:16px; top:16px; z-index:80; display:flex; flex-direction:column; gap:10px; align-items:flex-start;
+    /* Left top hamburger menu */
+    .left-menu{
+      position:fixed; left:16px; top:16px; z-index:90; display:flex; flex-direction:column; gap:10px; align-items:flex-start;
     }
-    .hamb {
-      width:56px; height:56px; border-radius:12px; background:var(--card); display:flex; align-items:center; justify-content:center; cursor:pointer;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+    .hamb{
+      width:56px;height:56px;border-radius:12px;background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;
+      box-shadow:0 8px 20px rgba(0,0,0,0.45);
     }
     .hamb .lines{width:22px;height:14px;display:flex;flex-direction:column;justify-content:space-between}
     .hamb .lines span{height:2px;background:var(--white);display:block;border-radius:2px}
 
-    .nav {
-      margin-top:8px; width:220px; padding:12px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    .nav{
+      margin-top:8px;width:220px;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow:0 10px 30px rgba(0,0,0,0.45);
     }
     .nav.hidden{display:none}
     .nav h4{margin:0 0 8px 0;color:var(--muted);font-size:13px}
@@ -49,15 +47,15 @@
 
     /* Header / logo */
     header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
-    .logo {
+    .logo{
       display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
-      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      box-shadow:0 8px 24px rgba(0,0,0,0.35);
     }
     .logo .emoji{font-size:30px}
-    .logo .title{font-weight:900;font-size:20px;letter-spacing:0.4px}
+    .logo .title{font-weight:900;font-size:20px}
     .logo .tag{font-size:12px;color:var(--muted);margin-top:2px;font-weight:700}
 
-    /* Hero */
+    /* Hero & meaning */
     .hero{display:flex;gap:18px;align-items:center;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));margin-bottom:16px}
     .hero h1{margin:0;font-size:28px}
     .hero p{margin:8px 0;color:var(--muted);max-width:760px;line-height:1.5}
@@ -66,58 +64,48 @@
     .btn.primary{background:var(--accent);color:#222}
     .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--white)}
 
-    /* Meaning block */
     .meaning{margin:16px 0;padding:16px;border-radius:12px;background:linear-gradient(90deg, rgba(155,211,194,0.03), rgba(246,200,95,0.02))}
     .meaning h3{margin:0 0 8px 0}
     .meaning p{margin:0;color:var(--muted);line-height:1.5}
 
-    /* MOVING toolbar (marquee-like) - not in a box */
+    /* Moving toolbar: LEFT → RIGHT movement (not boxed) */
     .marquee-wrap{
       position:relative;
       overflow:hidden;
-      height:62px; /* contains chips height */
+      height:68px;
       margin:18px 0 24px 0;
     }
-    /* Create a long horizontal strip of chips repeated */
-    .marquee {
+    .marquee{
       display:flex;
       gap:16px;
       align-items:center;
       position:absolute;
-      left:0;
       top:0;
-      height:62px;
-      padding-left:100%;
-      /* animation moves left-to-right visually (we set translateX from 0 -> -50% then loop) */
-      animation: scrollLeft 24s linear infinite;
+      left:0;
+      height:68px;
+      padding-right:100%;
+      /* animate from -50% to 0% to move content rightwards (left→right) */
+      animation: moveRight 24s linear infinite;
       will-change:transform;
     }
-
-    /* duplicate strip for seamless loop */
-    .marquee--dup { left:auto; right:-100%; padding-left:0; animation: scrollLeft 24s linear infinite; }
-
-    .chip {
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 14px;
-      border-radius:999px;
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      color:var(--white);
-      font-weight:700;
-      font-size:14px;
-      border:1px solid rgba(255,255,255,0.03);
-      white-space:nowrap;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+    /* duplicate content for seamless loop */
+    .marquee.dup{
+      left:auto;
+      right:0;
+      padding-right:0;
+      animation: moveRight 24s linear infinite;
+    }
+    .chip{
+      display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      color:var(--white);font-weight:700;font-size:14px;border:1px solid rgba(255,255,255,0.03);white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,0.35);
     }
 
-    /* animation: move content from right to left continuously */
-    @keyframes scrollLeft {
-      0% { transform: translateX(0%); }
-      100% { transform: translateX(-50%); } /* -50% because duplicated content placed after; adjust duration to speed */
+    @keyframes moveRight {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0%); }
     }
 
-    /* Services card */
+    /* Services + cards */
     .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;margin-bottom:14px}
     .muted{color:var(--muted)}
 
@@ -128,40 +116,38 @@
     input,select,textarea{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--white);padding:10px;border-radius:8px}
     textarea{min-height:110px;resize:vertical}
 
-    /* highlighted join banner on registration */
-    .highlight {
-      display:inline-block;padding:8px 12px;border-radius:10px;font-weight:900;background:linear-gradient(90deg,var(--accent),var(--accent-2));
-      color:#222;margin:8px 0;box-shadow:0 8px 26px rgba(0,0,0,0.35);
-      animation: pulse 2.6s ease-in-out infinite;
+    /* Highlight: eye-catching "Most Profitable..." */
+    .big-highlight{
+      display:inline-block;padding:10px 14px;border-radius:12px;font-weight:900;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#111;margin:10px 0;
+      box-shadow:0 10px 30px rgba(246,200,95,0.18);font-size:18px;
+      animation: pulse 2.4s ease-in-out infinite;
     }
     @keyframes pulse {
-      0% { transform:scale(1); box-shadow:0 6px 18px rgba(246,200,95,0.12) }
-      50% { transform:scale(1.03); box-shadow:0 18px 40px rgba(246,200,95,0.16) }
-      100% { transform:scale(1); box-shadow:0 6px 18px rgba(246,200,95,0.12) }
+      0% { transform:scale(1); }
+      50% { transform:scale(1.03); }
+      100% { transform:scale(1); }
     }
 
     /* Process & budget */
     .process{display:flex;flex-direction:column;gap:10px;margin-top:10px}
     .step{background:var(--glass);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
-    table{width:100%;border-collapse:collapse;margin-top:12px;color:var(--white)}
+    table{width:100%;border-collapse:collapse;margin-top:12px;color:var(--white}
     th,td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left}
     th{color:var(--muted);font-weight:800}
 
-    /* Footer contact */
+    /* Footer */
     footer{margin-top:18px;padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
     .inline-link{color:var(--accent);font-weight:800}
 
-    /* responsive tweaks */
     @media (max-width:700px){
       .hero{flex-direction:column}
       form .row{flex-direction:column}
-      .marquee-wrap{height:86px}
+      .marquee-wrap{height:96px}
     }
   </style>
 </head>
 <body>
-
-  <!-- LEFT MENU -->
+  <!-- left menu -->
   <div class="left-menu" aria-hidden="false">
     <div class="hamb" id="hamb" title="Toggle menu">
       <div class="lines"><span></span><span></span><span></span></div>
@@ -177,9 +163,9 @@
     </nav>
   </div>
 
-  <div class="container">
-    <!-- HEADER / LOGO -->
-    <header id="home">
+  <div class="app" id="home">
+    <!-- header -->
+    <header>
       <div class="logo" role="img" aria-label="24/7 Nook logo">
         <div class="emoji">🛒</div>
         <div>
@@ -189,11 +175,11 @@
       </div>
     </header>
 
-    <!-- HERO -->
+    <!-- hero -->
     <section class="hero" aria-labelledby="heroTitle">
       <div>
         <h1 id="heroTitle">🛒 24/7 Nook Convenience Store</h1>
-        <p><strong>Open 24×7.</strong> Quick essentials, fresh snacks, beverages, household items — whenever your community needs them. Our franchise program is designed for fast setup, strong margins and local-first assortments.</p>
+        <p><strong>Open 24×7.</strong> Quick essentials, packaged & fresh food, beverages and household items whenever your community needs them. Our franchise model focuses on fast setup, reliable supply and consistent margins.</p>
         <div class="cta">
           <button class="btn primary" onclick="document.getElementById('franchise').scrollIntoView({behavior:'smooth'})">Register as Franchiser</button>
           <button class="btn ghost" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Explore Services</button>
@@ -201,22 +187,22 @@
       </div>
 
       <div style="min-width:220px;">
-        <div style="width:240px;height:140px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:#222;font-weight:900;text-align:center;box-shadow:0 10px 28px rgba(0,0,0,0.45)">
+        <div style="width:240px;height:140px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:#111;font-weight:900;text-align:center;box-shadow:0 10px 28px rgba(0,0,0,0.45)">
           24/7 NOOK<br><span style="font-size:13px">FRANCHISE OPPORTUNITY</span>
         </div>
       </div>
     </section>
 
-    <!-- WHAT IT MEANS -->
-    <section class="meaning" aria-labelledby="meaning">
-      <h3 id="meaning">What it means to use 24/7 Nook</h3>
-      <p>Using 24/7 Nook means dependable access to essentials at every hour — consistent pricing, friendly service, and a curated mix of products chosen for your locality. Late-night snacks, emergency household items, or an early-morning coffee — we keep your neighbourhood covered.</p>
+    <!-- what it means -->
+    <section class="meaning" aria-labelledby="meaningTitle">
+      <h3 id="meaningTitle">What it means to use 24/7 Nook</h3>
+      <p>Using 24/7 Nook means dependable access to everyday essentials at any hour — consistent pricing, friendly service and a curated, locally-relevant product mix. From late-night snacks to urgent household items, we are there for your neighbourhood.</p>
     </section>
 
-    <!-- MOVING toolbar (not in a box) -->
+    <!-- moving toolbar (left → right) -->
     <section id="services" aria-label="convenience categories">
-      <div class="marquee-wrap" aria-hidden="false">
-        <!-- Primary strip (content repeated twice for smooth loop) -->
+      <div class="marquee-wrap" aria-hidden="false" role="presentation">
+        <!-- primary strip -->
         <div class="marquee" aria-hidden="true">
           <div class="chip">Packaged Food Items</div>
           <div class="chip">Fresh Food & Snacks</div>
@@ -228,7 +214,7 @@
           <div class="chip">Stationery & Gifts</div>
           <div class="chip">Quick Meals</div>
           <div class="chip">Recharge & Bills</div>
-          <!-- repeat set (helps seamless loop) -->
+          <!-- duplicate for a smooth loop -->
           <div class="chip">Packaged Food Items</div>
           <div class="chip">Fresh Food & Snacks</div>
           <div class="chip">Beverages & Drinks</div>
@@ -243,25 +229,25 @@
       </div>
     </section>
 
-    <!-- Services card -->
+    <!-- offerings -->
     <section>
       <div class="card">
         <h3>Our Offerings</h3>
-        <p class="muted">A flexible mix: ready-to-eat, packaged snacks, beverages, chilled dairy & frozen, household essentials, personal care, OTC items and a small-services corner (recharges, bill-pay). Designed for quick turnover and local preference.</p>
+        <p class="muted">Ready-to-eat, packaged snacks, beverages, chilled dairy & frozen, household essentials, personal care, OTC items and small services like recharges and bill-pay — selected for fast turnover and local needs.</p>
       </div>
     </section>
 
-    <!-- FRANCHISE REGISTRATION -->
+    <!-- franchise registration -->
     <section id="franchise">
       <div class="card">
-        <h2><!-- highlight line --> <span class="highlight">Join "most profitable convenience store of India"</span></h2>
-        <p class="muted">Want to run your own 24/7 Nook outlet? Fill the registration form — our franchise team will review and reach out with next steps.</p>
+        <h2><span class="big-highlight">Most Profitable Convenience Store of India</span></h2>
+        <p class="muted">Ready to partner with us? Fill the franchiser registration form — our team will review and contact you with next steps.</p>
 
-        <form id="franchiseForm" onsubmit="handleSubmit(event)">
+        <form id="franchiseForm" onsubmit="handleSubmit(event)" autocomplete="on">
           <div class="row">
             <div class="col">
-              <label for="name">Full name</label>
-              <input id="name" name="name" required placeholder="Your full name">
+              <label for="fullname">Full name</label>
+              <input id="fullname" name="fullname" required placeholder="Your full name">
             </div>
             <div class="col">
               <label for="email">Email</label>
@@ -309,15 +295,15 @@
         </form>
       </div>
 
-      <!-- Process of taking franchise and Budget -->
+      <!-- process & budget -->
       <div class="card">
         <h3>Process of taking a franchise</h3>
         <div class="process">
-          <div class="step"><strong>1. Registration</strong> — Fill the franchiser form above.</div>
-          <div class="step"><strong>2. Review</strong> — Team assesses location & financials.</div>
+          <div class="step"><strong>1. Registration</strong> — Submit the franchiser form above.</div>
+          <div class="step"><strong>2. Review</strong> — Team evaluates location & finances.</div>
           <div class="step"><strong>3. Site visit & Agreement</strong> — Inspection and franchise signing.</div>
           <div class="step"><strong>4. Setup & Training</strong> — Fit-out, procurement & staff training.</div>
-          <div class="step"><strong>5. Launch & Support</strong> — Grand opening support & ongoing operations help.</div>
+          <div class="step"><strong>5. Launch & Support</strong> — Grand opening support & ongoing operations assistance.</div>
         </div>
 
         <h4 style="margin-top:12px">Indicative budget (examples)</h4>
@@ -332,19 +318,19 @@
             <tr><td>1000 sqm</td><td>₹35,00,000+</td><td>High-capacity store, possible deli & expanded categories</td></tr>
           </tbody>
         </table>
-        <p class="muted" style="margin-top:10px">*Figures are indicative and depend on location, lease, approvals and equipment choices.</p>
+        <p class="muted" style="margin-top:10px">*Estimates are indicative and depend on location, lease, approvals and equipment choices.</p>
       </div>
     </section>
 
-    <!-- ABOUT -->
+    <!-- about -->
     <section id="about">
       <div class="card">
         <h3>About 24/7 Nook</h3>
-        <p class="muted">24/7 Nook is built for local convenience — curated assortments, quick service, and operational simplicity. We provide training, supply access and ongoing support to help franchisees succeed.</p>
+        <p class="muted">24/7 Nook focuses on accessible, local-first convenience retail. We provide franchisees with training, supply support and operational tools so outlets can quickly reach profitability.</p>
       </div>
     </section>
 
-    <!-- CONTACT -->
+    <!-- contact / footer -->
     <footer id="contact">
       <div>
         <div style="font-weight:900">Contact</div>
@@ -356,34 +342,33 @@
 
       <div style="text-align:right">
         <div style="font-weight:900">24/7 Nook Convenience Store</div>
-        <div class="muted" style="margin-top:6px">© <span id="yr"></span> 24/7 Nook — All rights reserved</div>
+        <div class="muted" style="margin-top:6px">© <span id="year"></span> 24/7 Nook — All rights reserved</div>
       </div>
     </footer>
   </div>
 
   <script>
-    // toggle left nav
+    // toggle left nav panel
     const hamb = document.getElementById('hamb');
     const nav = document.getElementById('nav');
-    let shown = true;
+    let visible = true;
     hamb.addEventListener('click', () => {
-      shown = !shown;
-      if (shown) nav.classList.remove('hidden'); else nav.classList.add('hidden');
+      visible = !visible;
+      if(visible) nav.classList.remove('hidden'); else nav.classList.add('hidden');
     });
 
-    // basic form submit (client-side demo)
+    // simple client-side form submit demo
     function handleSubmit(e){
       e.preventDefault();
-      const name = (document.getElementById('name').value || 'Applicant');
-      const size = (document.getElementById('size').value || 'N/A');
-      alert(`Thanks, ${name}!\nYour franchise registration was received.\nPreferred store size: ${size} sqm.\nWe will contact you shortly at the provided email/phone.`);
+      const nm = document.getElementById('fullname').value || 'Applicant';
+      const sz = document.getElementById('size').value || 'N/A';
+      alert(`Thank you, ${nm}!\\nRegistration received. Preferred store size: ${sz} sqm.\\nWe will contact you shortly at the email/phone you provided.`);
       e.target.reset();
-      // scroll to contact
       document.getElementById('contact').scrollIntoView({behavior:'smooth'});
     }
 
-    // fill current year in footer
-    document.getElementById('yr').textContent = new Date().getFullYear();
+    // set year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
